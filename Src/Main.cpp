@@ -26,16 +26,10 @@ GLuint			g_ProjUniform = 0;
 
 ParticleSystem*	g_ParticleSystem = nullptr;
 
-<<<<<<< HEAD
 class Camera
 {
 public:
 	Camera()
-=======
-struct Camera_t
-{
-	Camera_t()
->>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 	{
 		m_Pos = vec3(0.0f, 300.0f,-1500.0f);
 		m_AngleYaw = 0;
@@ -55,11 +49,8 @@ struct Camera_t
 	float		m_AngleYaw;
 	float		m_AnglePitch;
 };
-<<<<<<< HEAD
+
 Camera		g_Camera;
-=======
-Camera_t		g_Camera;
->>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 
 //Spheres that will be randlomly spawned at random locations in our scene.
 const int		g_SpheresCount = 20;
