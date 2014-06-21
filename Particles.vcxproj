@@ -19,7 +19,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
+<<<<<<< HEAD
+    <PlatformToolset>v120</PlatformToolset>
+=======
     <PlatformToolset>v110</PlatformToolset>
+>>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

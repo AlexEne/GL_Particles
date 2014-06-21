@@ -44,13 +44,16 @@ private:
 	ParticleVelocity*	m_ParticlesVelocity;	//Buffer holding the particle velocities.
 
 	unsigned int		m_ParticleCount;    //Number of particles.
+	int					m_csOutputIdx;		//Output index to identify for the buffer that 
+
 
 	GLShaderProgram		m_ComputeShader;
 
 //  GLuint              m_glPointTexture;
 
-	GLuint				m_glPositionBuffer;
-	GLuint				m_glVelocityBuffer;
+	
+	GLuint				m_glPositionBuffer[2];//Swap input and output alternatively between each render.
+	GLuint				m_glVelocityBuffer[2];
 
 	GLuint				m_glUniformDT;		//We also need to send dt to the compute shader.
 	GLuint				m_glUniformSpheres;	//uniform for specifying the position/radius of the spheres in our scene.

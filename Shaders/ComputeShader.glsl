@@ -6,13 +6,33 @@ layout( local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 layout ( binding = 0 ) buffer
 buffer_Pos
 {
+<<<<<<< HEAD
+	vec4	InPos[];
+=======
 	vec4	Pos[];
+>>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 };
 
 layout ( binding = 1 ) buffer
 buffer_Velocity
 {
+<<<<<<< HEAD
+	vec4	InVelocity[];
+};
+
+layout ( binding = 1 ) buffer
+buffer_Pos
+{
+	vec4	OutPos[];
+};
+
+layout ( binding = 2 ) buffer
+buffer_Velocity
+{
+	vec4	OutVelocity[];
+=======
 	vec4	Velocity[];
+>>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 };
 
 // layout( binding = 2, rgba32f) uniform image2D inVelocity;
@@ -45,9 +65,15 @@ float rand(vec2 co){
 void main(void)
 {
 	uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * 1024;
+<<<<<<< HEAD
+	vec4 particlePos = InPos[index];
+    ivec2 p = ivec2(gl_GlobalInvocationID.xy);
+    vec4 particleVelocity = InVelocity[index];
+=======
 	vec4 particlePos = Pos[index];
     ivec2 p = ivec2(gl_GlobalInvocationID.xy);
     vec4 particleVelocity = Velocity[index];
+>>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 
 	//Update Velocity
 	vec4 newParticleVelocity = particleVelocity;
@@ -153,6 +179,11 @@ void main(void)
 	newParticleVelocity.w -= dt;
 
 	//Save the new possitions and velocities
+<<<<<<< HEAD
+	OutPos[index] = particlePos;
+    OutVelocity[index] = newParticleVelocity;
+=======
 	Pos[index] = particlePos;
     Velocity[index] = newParticleVelocity;
+>>>>>>> 5ce6b4d86cd87fc0d82a2cfecc7550ccc972a315
 }
