@@ -98,12 +98,6 @@ void ParticleSystem::RenderInit()
 	m_glUniformDT = m_ComputeShader.GetUniformLocation("dt");
 	m_glUniformSpheres = m_ComputeShader.GetUniformLocation("spheres[0].sphereOffset");
 
-    //Set the shader storage block indices
-	GLuint SSblockIndex = glGetProgramResourceIndex(m_ComputeShader.GetHandle(), GL_SHADER_STORAGE_BLOCK, "buffer_Pos");
-	glShaderStorageBlockBinding(m_ComputeShader.GetHandle(), SSblockIndex, SSblockIndex);
-	SSblockIndex = glGetProgramResourceIndex(m_ComputeShader.GetHandle(), GL_SHADER_STORAGE_BLOCK, "buffer_Velocity");
-	glShaderStorageBlockBinding(m_ComputeShader.GetHandle(), SSblockIndex, SSblockIndex);
-
 	//Create and set the vertex array object
     glGenVertexArrays(1, &m_glDrawVAO);
     glBindVertexArray(m_glDrawVAO);
@@ -143,7 +137,7 @@ void ParticleSystem::Update(float dt)
 
     //Setup and execute the compute shader
 	const int workgroups_count = 1024/32;
-	glDispatchCompute(workgroups_count, workgroups_count, 2);
+	glDispatchCompute(workgroups_count, workgroups_count, 1);
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);

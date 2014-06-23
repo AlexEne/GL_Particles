@@ -4,25 +4,25 @@
 layout( local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
 layout ( binding = 0 ) buffer
-buffer_Pos
+buffer_InPos
 {
 	vec4	InPos[];
 };
 
 layout ( binding = 1 ) buffer
-buffer_Velocity
+buffer_InVelocity
 {
 	vec4	InVelocity[];
 };
 
-layout ( binding = 1 ) buffer
-buffer_Pos
+layout ( binding = 2 ) buffer
+buffer_OutPos
 {
 	vec4	OutPos[];
 };
 
-layout ( binding = 2 ) buffer
-buffer_Velocity
+layout ( binding = 3 ) buffer
+buffer_OutVelocity
 {
 	vec4	OutVelocity[];
 };
