@@ -58,7 +58,7 @@ Sphere_t		g_Spheres[g_SpheresCount];
 
 
 //Callback used by opengl when an error is encountered
-void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, void* userParam)
+void APIENTRY openglDebugCallback (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, void* userParam)
 {
 	//Just output it to console and stop execution.
 	printf("%s\n", message);
@@ -94,13 +94,14 @@ static void InitSDL()
 	glewExperimental=GL_TRUE;
 	GLenum err = glewInit();
 
+    //Using vsync
+    SDL_GL_SetSwapInterval(1);
+
 #ifdef DEBUG_OPENGL
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(openglCallbackFunction, NULL);
+	glDebugMessageCallback(openglDebugCallback , NULL);
+    glEnable(GL_DEBUG_OUTPUT);
 #endif // DEBUG_OPENGL
-	
-	//Using vsync
-	SDL_GL_SetSwapInterval(1);
 }
 
 
@@ -117,15 +118,11 @@ void InitScene()
 	g_ProjUniform = g_ShaderProgram.GetUniformLocation("ProjMtx");
 	
 	//Create the particle system and initialize it
-	g_ParticleSystem = new ParticleSystem( 1024 * 1024 );
+	g_ParticleSystem = new ParticleSystem( 1024 * 1024 * 4);
 	g_ParticleSystem->Init();
 
 	g_Camera.m_ProjMtx = glm::perspective(45.0f, 4.0f / 3.0f, 0.5f, 10000.0f);
 	g_Camera.m_ViewMtx = glm::lookAt(g_Camera.m_Pos, vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-
-#ifdef DEBUG_OPENGL
-	glEnable(GL_DEBUG_OUTPUT);
-#endif
 
 	glPointSize(1.6f);
 	
@@ -190,6 +187,8 @@ void Cleanup()
 	delete g_ParticleSystem;
 
 	//Destroy SDL window	
+    SDL_GL_DeleteContext( gContext );
+
 	SDL_DestroyWindow( g_pWindow );
 	g_pWindow = NULL;
 

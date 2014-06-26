@@ -19,8 +19,6 @@ public:
 	bool			CompileShaderFromFile(const char* file, ShaderType type);
 	bool			CompileShaderFromString(const char* str, ShaderType type); 
 	bool			Link();
-	void			PrintActiveUniforms();
-	void			PrintActiveAttribs();
 
 	void			SetUniform(const char* name, float x, float y, float z);
 	void			SetUniform(const char* name, float x, float y, float z, float w);

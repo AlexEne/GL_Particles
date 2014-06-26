@@ -138,18 +138,6 @@ void GLShaderProgram::Init()
 }
 
 
-void	GLShaderProgram::PrintActiveUniforms()
-{
-
-}
-
-
-void	GLShaderProgram::PrintActiveAttribs()
-{
-
-}
-
-
 void	GLShaderProgram::SetUniform(const char* name, float x, float y, float z)
 {
 	GLint uniformLocation = GetUniformLocation(name);
