@@ -16,7 +16,7 @@ void main()
 	
 	//Get the speed and interpolate (mix) between largeSpeed and smallSpeed color.
 	float speed = clamp(position.w, 0.0, 400.0);
-	vec3 largeSpeed = vec3(0.2, 0.2, 0.2);
+	vec3 largeSpeed = vec3(0.4, 0.4, 0.4);
 	vec3 smallSpeed = vec3(1.0, 1.0, 1.0);
 
 	//Interpolate between the two colors

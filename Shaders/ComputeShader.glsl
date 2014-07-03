@@ -40,6 +40,7 @@ struct Sphere_t
 
 const int spheresCount = 20;
 uniform Sphere_t spheres[spheresCount];
+uniform int g_NumParticles;
 
 const float gAccel = 9.8;
 
@@ -47,7 +48,7 @@ const float gAccel = 9.8;
 //For the moment just use a distance function.
 float DistanceFieldCircle(vec3 p, vec3 sphereOffset, float sphereRadius)
 {
-	return length(-p + sphereOffset) - sphereRadius;
+	return length(sphereOffset - p) - sphereRadius;
 }
 
 float rand(vec2 co){
@@ -56,10 +57,12 @@ float rand(vec2 co){
 
 void main(void)
 {
-	uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * 1024;
+	uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * gl_NumWorkGroups.x * gl_WorkGroupSize.x;
+
+	if(index > g_NumParticles)
+		return;
 
 	vec4 particlePos = InPos[index];
-    ivec2 p = ivec2(gl_GlobalInvocationID.xy);
     vec4 particleVelocity = InVelocity[index];
 
 	//Update Velocity
@@ -67,7 +70,7 @@ void main(void)
 	
 	//We could recycle this particle since it's life is over. ( not used now )
 	// Recycle the particle if we touched the ground of if our speed is too small.
-	if ( particlePos.y <= 0.001 || particlePos.w <= 0.01 )
+	if ( particlePos.y <= 0.001 )
 	{
 		float rand1 = rand(particlePos.xz);
 		float rand2 = rand(particlePos.zx);
@@ -78,14 +81,14 @@ void main(void)
 		
 		//Generate a random speed.
 		newParticleVelocity.x = -5.0 + mod(rand2 * 100.0f, 10.0);
-		newParticleVelocity.y = -5.0 + -mod(rand2 * 100.0f, 10.0);
+		newParticleVelocity.y = -5.0 + mod(rand2 * 100.0f, 10.0);
 		newParticleVelocity.z = -5.0 + mod(rand1 * 100.0f, 10.0);
 		newParticleVelocity.w = 10.0;
 	}
 	else
 	{
 		//Just update the particle
-		particlePos.xyz = particlePos.xyz + particleVelocity.xyz*dt + gAccel/2.0 * dt * dt;
+		particlePos.xyz = particlePos.xyz + particleVelocity.xyz*dt;
 		newParticleVelocity.y = newParticleVelocity.y - gAccel * dt;
 	}
 
@@ -134,7 +137,7 @@ void main(void)
 			//Distance field evaluation
 			float dist = DistanceFieldCircle(particlePos.xyz, sphereCenter, sphere.sphereRadius);
 		
-			if(dist < minDist && dist < 0.01)
+			if(dist < minDist && dist < 0)
 			{
 				minDist = dist;
 				closestSphereIdx = i;
@@ -152,10 +155,15 @@ void main(void)
 			
 			//Reflect our speed
 			newParticleVelocity.xyz = reflect(newParticleVelocity.xyz,ReflectionNormal);
-			newParticleVelocity.xyz *= 0.2;
+			if(abs(newParticleVelocity.x) > 2.0)
+                newParticleVelocity.x *= 0.2;
+            if(abs(newParticleVelocity.y) > 2.0)
+                newParticleVelocity.y *= 0.2;
+            if(abs(newParticleVelocity.z) > 2.0)
+                newParticleVelocity.z *= 0.2;
 
 			//Move the particle away from the collision just a bit.
-			particlePos.xyz = closestSphere.sphereOffset + ReflectionNormal * (closestSphere.sphereRadius + 0.1);
+			particlePos.xyz = closestSphere.sphereOffset + ReflectionNormal * ( closestSphere.sphereRadius + 0.1);
 		}
 	}
 

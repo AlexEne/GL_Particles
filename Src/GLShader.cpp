@@ -241,6 +241,11 @@ void GLShaderProgram::SetUniform( int uniform, glm::mat3 mtx)
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, &mtx[0][0]);
 }
 
+void GLShaderProgram::SetUniform( int uniform, int val )
+{
+	glUniform1i(uniform, val);
+}
+
 GLShaderProgram::~GLShaderProgram()
 {
 	glDeleteProgram(m_Handle);

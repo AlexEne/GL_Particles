@@ -66,16 +66,16 @@ void APIENTRY openglDebugCallback (GLenum source, GLenum type, GLuint id, GLenum
 }
 
 //Initialize SDL, create the opengl context and then we initialize glew.
-static void InitSDL()
+static void InitSystem()
 {
-	int i = SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO);
 
 	g_pWindow = SDL_CreateWindow("GLParticles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
 	//Specify context flags.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -89,13 +89,13 @@ static void InitSDL()
 
 	//Create opengl context
 	gContext = SDL_GL_CreateContext(g_pWindow);
+
+	//Using vsync
+	SDL_GL_SetSwapInterval(1);
 	
 	//Can use opengl functions after this is called.
 	glewExperimental=GL_TRUE;
 	GLenum err = glewInit();
-
-    //Using vsync
-    SDL_GL_SetSwapInterval(1);
 
 #ifdef DEBUG_OPENGL
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -118,13 +118,13 @@ void InitScene()
 	g_ProjUniform = g_ShaderProgram.GetUniformLocation("ProjMtx");
 	
 	//Create the particle system and initialize it
-	g_ParticleSystem = new ParticleSystem( 1024 * 1024 * 4);
-	g_ParticleSystem->Init();
+	g_ParticleSystem = new ParticleSystem( 1024 * 1024 * 2 );
+	g_ParticleSystem->Init(1024/32, 1024*2/32, 1);
 
 	g_Camera.m_ProjMtx = glm::perspective(45.0f, 4.0f / 3.0f, 0.5f, 10000.0f);
 	g_Camera.m_ViewMtx = glm::lookAt(g_Camera.m_Pos, vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
-	glPointSize(1.6f);
+	glPointSize(1.5f);
 	
 	srand((unsigned int)time(0));
 
@@ -198,7 +198,7 @@ void Cleanup()
 
 int main(int argc, char *argv[])
 {
-	InitSDL();
+	InitSystem();
 	InitScene();
 	bool quit = false;
 

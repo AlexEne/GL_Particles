@@ -26,38 +26,40 @@ struct ParticleVelocity
 class ParticleSystem
 {
 public:
-						ParticleSystem();
-						~ParticleSystem();
 	explicit			ParticleSystem(int count);
+						~ParticleSystem();
+	
 
 	void				Draw(GLuint glDrawShaderID);
 
 	void				Update(float dt);
 
-	void				Init();
+	void				Init(unsigned int numWorkgroups_x, unsigned int numWorkgroups_y, unsigned int numWorkgroups_z);
 
 private:
-	void				RenderInit();
+	void				RenderInit(const ParticlePos* particlesPos, const ParticleVelocity* particlesVelocity);
 
 private:
-	ParticlePos*		m_ParticlesPos;		//Buffer holding the particle positions.
-	ParticleVelocity*	m_ParticlesVelocity;	//Buffer holding the particle velocities.
-
 	unsigned int		m_ParticleCount;    //Number of particles.
 	int					m_csOutputIdx;		//Output index to identify for the buffer that 
-
+	unsigned int		m_NumWorkGroups[3];
 
 	GLShaderProgram		m_ComputeShader;
 
 //  GLuint              m_glPointTexture;
 
-	
 	GLuint				m_glPositionBuffer[2];//Swap input and output alternatively between each render.
 	GLuint				m_glVelocityBuffer[2];
 
 	GLuint				m_glUniformDT;		//We also need to send dt to the compute shader.
-	GLuint				m_glUniformSpheres;	//uniform for specifying the position/radius of the spheres in our scene.
-    GLuint              m_glDrawVAO;        //Vertex array object used for drawing.
+	GLuint				m_glUniformSpheres;	//Uniform for specifying the position/radius of the spheres in our scene.
+	GLuint				m_glNumParticles;   //Total number of particles
+    GLuint              m_glDrawVAO[2];     //Vertex array object used for drawing.
+
+private:
+	ParticleSystem(const ParticleSystem& other);
+	ParticleSystem& operator=(const ParticleSystem& other);
 };
+
 
 #endif //GL_PARTICLE_SYSTEM

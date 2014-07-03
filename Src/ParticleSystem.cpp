@@ -5,31 +5,13 @@
 #include <ctime>
 
 
-ParticleSystem::ParticleSystem():
-m_glUniformDT(0),
-m_glUniformSpheres(0),
-m_glDrawVAO(0),
-m_csOutputIdx(1)
-{
-	m_ParticleCount = 10;
-	m_ParticlesPos = new ParticlePos[m_ParticleCount];
-	m_ParticlesVelocity = new ParticleVelocity[m_ParticleCount];
-	for (int i = 0; i < 2; ++i)
-	{
-		m_glVelocityBuffer[i] = 0;
-		m_glPositionBuffer[i] = 0;
-	}
-}
-
 ParticleSystem::ParticleSystem(int count):
 m_glUniformDT(0),
 m_glUniformSpheres(0),
-m_glDrawVAO(0),
 m_csOutputIdx(1)
 {
 	m_ParticleCount = count;
-	m_ParticlesPos = new ParticlePos[m_ParticleCount];
-	m_ParticlesVelocity = new ParticleVelocity[m_ParticleCount];
+
 	for (int i = 0; i < 2; ++i)
 	{
 		m_glVelocityBuffer[i] = 0;
@@ -39,9 +21,7 @@ m_csOutputIdx(1)
 
 ParticleSystem::~ParticleSystem()
 {
-	delete[] m_ParticlesPos;
-	delete[] m_ParticlesVelocity;
-	glDeleteVertexArrays(1, &m_glDrawVAO);
+	glDeleteVertexArrays(2, m_glDrawVAO);
 	
 	for (int i = 0; i < 2; ++i)
 	{
@@ -51,14 +31,21 @@ ParticleSystem::~ParticleSystem()
 }
 
 //Initialize the positions, velocities and lifetime for our particles.
-void ParticleSystem::Init()
+void ParticleSystem::Init(unsigned int numWorkgroups_x, unsigned int numWorkgroups_y, unsigned int numWorkgroups_z)
 {
 	static const float cubeSize = 1400.0f;
+	
+	m_NumWorkGroups[0] = numWorkgroups_x;
+	m_NumWorkGroups[1] = numWorkgroups_y;
+	m_NumWorkGroups[2] = numWorkgroups_z;
 
-	memset(m_ParticlesVelocity, 0, m_ParticleCount*sizeof(ParticleVelocity));
+	ParticlePos* particlesPos = new ParticlePos[m_ParticleCount];
+	ParticleVelocity* particlesVelocity = new ParticleVelocity[m_ParticleCount];
 
-	ParticlePos* pParticlePos = m_ParticlesPos;
-	ParticleVelocity* pParticleSpeed = m_ParticlesVelocity;
+	memset(particlesVelocity, 0, m_ParticleCount*sizeof(ParticleVelocity));
+
+	ParticlePos* pParticlePos = particlesPos;
+	ParticleVelocity* pParticleSpeed = particlesVelocity;
 	for (unsigned int i = 0; i < m_ParticleCount; ++i)
 	{
 		//Assign random positions/velocities
@@ -76,47 +63,57 @@ void ParticleSystem::Init()
 		pParticleSpeed++;
 	}
 
-	RenderInit();
+	RenderInit(particlesPos, particlesVelocity);
+	
+	delete[] particlesPos;
+	delete[] particlesVelocity;
 }
 
 
 //Initialize members related to opengl.
-void ParticleSystem::RenderInit()
+void ParticleSystem::RenderInit(const ParticlePos* particlesPos,const ParticleVelocity* particlesVelocity)
 {
 	//Initialize and create the compute shader that will move the particles in the scene
 	m_ComputeShader.Init();
 	m_ComputeShader.CompileShaderFromFile("Shaders\\ComputeShader.glsl", GLShaderProgram::Compute);
 	m_ComputeShader.Link();
 
-	m_glPositionBuffer[0] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)m_ParticlesPos, m_ParticleCount*sizeof(ParticlePos));
-	m_glPositionBuffer[1] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)m_ParticlesPos, m_ParticleCount*sizeof(ParticlePos));
+	m_glPositionBuffer[0] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)particlesPos, m_ParticleCount*sizeof(ParticlePos));
+	m_glPositionBuffer[1] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)particlesPos, m_ParticleCount*sizeof(ParticlePos));
 
-    m_glVelocityBuffer[0] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)m_ParticlesVelocity, m_ParticleCount*sizeof(ParticleVelocity));
-	m_glVelocityBuffer[1] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)m_ParticlesVelocity, m_ParticleCount*sizeof(ParticleVelocity));
+	m_glVelocityBuffer[0] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)particlesVelocity, m_ParticleCount*sizeof(ParticleVelocity));
+	m_glVelocityBuffer[1] = AllocateBuffer(GL_SHADER_STORAGE_BUFFER, (float*)particlesVelocity, m_ParticleCount*sizeof(ParticleVelocity));
     
 	//Cache uniforms
-	m_glUniformDT = m_ComputeShader.GetUniformLocation("dt");
-	m_glUniformSpheres = m_ComputeShader.GetUniformLocation("spheres[0].sphereOffset");
+	m_glUniformDT		= m_ComputeShader.GetUniformLocation("dt");
+	m_glUniformSpheres	= m_ComputeShader.GetUniformLocation("spheres[0].sphereOffset");
+	m_glNumParticles	= m_ComputeShader.GetUniformLocation("g_NumParticles");
 
-	//Create and set the vertex array object
-    glGenVertexArrays(1, &m_glDrawVAO);
-    glBindVertexArray(m_glDrawVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_glPositionBuffer[m_csOutputIdx]);
+	//Create and set the vertex array objects
+    glGenVertexArrays(2, m_glDrawVAO);
+
+    glBindVertexArray(m_glDrawVAO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_glPositionBuffer[0]);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(m_glDrawVAO[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_glPositionBuffer[1]);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(0);
+	
+
     glBindVertexArray(0);
 }
 
 //Particles are sent to the compute shader and we compute there the new positions/velocities.
 void ParticleSystem::Update(float dt)
 {
-	//Bind input
 	glUseProgram(m_ComputeShader.GetHandle()); 
-	GLuint m_glRndSeed = m_ComputeShader.GetUniformLocation("rnd_Seed");
-	m_ComputeShader.SetUniform(m_glRndSeed, (float)rand());
 
 	//Send the sphere positions/radius to the compute shader
 	m_ComputeShader.SetUniform(m_glUniformDT, dt);
+
 	if(m_glUniformSpheres != 0)
 	{
 		for (int i = 0; i < g_SpheresCount; ++i)
@@ -127,6 +124,8 @@ void ParticleSystem::Update(float dt)
 		}
 	}
 
+	m_ComputeShader.SetUniform(m_glNumParticles, (int)m_ParticleCount);
+
     //Bind the position and speed buffers
 	//Input = !m_csOutputIDX
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_glPositionBuffer[!m_csOutputIdx], 0, m_ParticleCount*sizeof(ParticlePos));
@@ -136,8 +135,7 @@ void ParticleSystem::Update(float dt)
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_glVelocityBuffer[m_csOutputIdx], 0, m_ParticleCount*sizeof(ParticleVelocity));
 
     //Setup and execute the compute shader
-	const int workgroups_count = 1024/32;
-	glDispatchCompute(workgroups_count, workgroups_count, 1);
+	glDispatchCompute(m_NumWorkGroups[0], m_NumWorkGroups[1], m_NumWorkGroups[2]);
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -153,10 +151,8 @@ void ParticleSystem::Draw(GLuint glDrawShaderID)
     glUseProgram(glDrawShaderID);
     
     //Set the active Vertex array object
-    glBindVertexArray(m_glDrawVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_glPositionBuffer[m_csOutputIdx]);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-	
+	glBindVertexArray(m_glDrawVAO[m_csOutputIdx]);
+
     //Draw
     glDrawArrays(GL_POINTS, 0, m_ParticleCount);
 
