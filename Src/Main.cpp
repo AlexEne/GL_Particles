@@ -63,8 +63,10 @@ void APIENTRY openglDebugCallback (GLenum source, GLenum type, GLuint id, GLenum
 	//Just output it to console and stop execution.
 	printf("%s\n", message);
 
+#ifdef _DEBUG
 	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
 		__debugbreak();
+#endif
 }
 
 //Initialize SDL, create the opengl context and then we initialize glew.
