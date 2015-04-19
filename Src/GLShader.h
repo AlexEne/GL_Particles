@@ -34,6 +34,11 @@ public:
 	void			SetUniform( int uniform, glm::mat4 mtx);
 	void			SetUniform( int uniform, glm::mat3 mtx);
 	void			SetUniform( int uniform, int val);
+	void			SetUniform1fv( int uniform, int count, float* values);
+	void			SetUniform2fv( int uniform, int count, float* values);
+	void			SetUniform3fv( int uniform, int count, float* values);
+	void			SetUniform4fv( int uniform, int count, float* values);
+
 
 	void			Init();
 

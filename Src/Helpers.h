@@ -5,13 +5,13 @@
 #include "glm\glm.hpp"
 #include <stdio.h>
 
-struct Sphere_t
+const int g_SpheresCount = 20;
+struct Spheres_t
 {
-	glm::vec3		center;
-	float			radius;
+	glm::vec3		centers[g_SpheresCount];
+	float			radii[g_SpheresCount];
 };
-extern const int g_SpheresCount;
-extern Sphere_t g_Spheres[];
+extern Spheres_t g_Spheres;
 
 //Allocates a GL_ARRAY_BUFFER and initialzes it with contents from pData. 
 //If pData is null the initialization is skippped.

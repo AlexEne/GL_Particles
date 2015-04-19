@@ -32,14 +32,10 @@ buffer_OutVelocity
 
 uniform float dt;
 
-struct Sphere_t
-{
-	vec3 sphereOffset;
-	float sphereRadius;
-};
-
 const int spheresCount = 20;
-uniform Sphere_t spheres[spheresCount];
+uniform	vec3 sphereOffsets[spheresCount];
+uniform	float sphereRadius[spheresCount];
+
 uniform int g_NumParticles;
 
 const float gAccel = 9.8;
@@ -130,12 +126,12 @@ void main(void)
 		int closestSphereIdx = -1;
 		for(int i = 0; i < spheresCount; i++)
 		{			
-			Sphere_t sphere = spheres[i];
-			vec3 sphereCenter = sphere.sphereOffset;
+			//Sphere_t sphere = ;
+			vec3 sphereCenter = sphereOffsets[i];
 			vec3 localPosition = particlePos.xyz - sphereCenter;
 
 			//Distance field evaluation
-			float dist = DistanceFieldCircle(particlePos.xyz, sphereCenter, sphere.sphereRadius);
+			float dist = DistanceFieldCircle(particlePos.xyz, sphereCenter, sphereRadius[i]);
 		
 			if(dist < minDist && dist < 0)
 			{
@@ -149,8 +145,8 @@ void main(void)
 			//We we collided with a sphere.
 
 			//Compute the reflection vector
-			Sphere_t closestSphere = spheres[closestSphereIdx];
-			vec3 localPosition = vec3(particlePos.x, particlePos.y, particlePos.z) - closestSphere.sphereOffset;
+			//Sphere_t closestSphere = spheres[closestSphereIdx];
+			vec3 localPosition = vec3(particlePos.x, particlePos.y, particlePos.z) - sphereOffsets[closestSphereIdx];
 			vec3 ReflectionNormal = normalize(localPosition);
 			
 			//Reflect our speed
@@ -163,7 +159,7 @@ void main(void)
                 newParticleVelocity.z *= 0.2;
 
 			//Move the particle away from the collision just a bit.
-			particlePos.xyz = closestSphere.sphereOffset + ReflectionNormal * ( closestSphere.sphereRadius + 0.1);
+			particlePos.xyz = sphereOffsets[closestSphereIdx] + ReflectionNormal * ( sphereRadius[closestSphereIdx] + 0.1);
 		}
 	}
 

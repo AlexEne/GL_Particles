@@ -51,9 +51,9 @@ private:
 	GLuint				m_glPositionBuffer[2];//Swap input and output alternatively between each render.
 	GLuint				m_glVelocityBuffer[2];
 
-	GLuint				m_glUniformDT;		//We also need to send dt to the compute shader.
-	GLuint				m_glUniformSpheresOffset;	//Uniform for specifying the position of the spheres in our scene.
-	GLuint				m_glUniformSpheresRadius;	//Uniform for specifying the radius of the spheres in our scene.
+	GLint				m_glUniformDT;		//We also need to send dt to the compute shader.
+	GLint				m_glUniformSpheresOffset;	//Uniform for specifying the position of the spheres in our scene.
+	GLint				m_glUniformSpheresRadius;	//Uniform for specifying the radius of the spheres in our scene.
 	GLuint				m_glNumParticles;   //Total number of particles
     GLuint              m_glDrawVAO[2];     //Vertex array object used for drawing.
 

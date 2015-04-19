@@ -6,9 +6,9 @@
 
 
 ParticleSystem::ParticleSystem(int count):
-m_glUniformDT(0),
-m_glUniformSpheresOffset(0),
-m_glUniformSpheresRadius(0),
+m_glUniformDT(-1),
+m_glUniformSpheresOffset(-1),
+m_glUniformSpheresRadius(-1),
 m_csOutputIdx(1)
 {
 	m_ParticleCount = count;
@@ -87,8 +87,8 @@ void ParticleSystem::RenderInit(const ParticlePos* particlesPos,const ParticleVe
     
 	//Cache uniforms
 	m_glUniformDT		= m_ComputeShader.GetUniformLocation("dt");
-	m_glUniformSpheresOffset	= m_ComputeShader.GetUniformLocation("spheres[0].sphereOffset");
-	m_glUniformSpheresRadius = m_ComputeShader.GetUniformLocation("spheres[0].sphereRadius");
+	m_glUniformSpheresOffset	= m_ComputeShader.GetUniformLocation("sphereOffsets");
+	m_glUniformSpheresRadius = m_ComputeShader.GetUniformLocation("sphereRadius");
 	m_glNumParticles	= m_ComputeShader.GetUniformLocation("g_NumParticles");
 
 	//Create and set the vertex array objects
@@ -116,15 +116,10 @@ void ParticleSystem::Update(float dt)
 	//Send the sphere positions/radius to the compute shader
 	m_ComputeShader.SetUniform(m_glUniformDT, dt);
 
-	if (m_glUniformSpheresOffset != 0 && m_glUniformSpheresRadius != 0 )
+	if (m_glUniformSpheresOffset != -1 && m_glUniformSpheresRadius != -1 )
 	{
-		for (int i = 0; i < g_SpheresCount; ++i)
-		{
-			GLuint uniformIdx = m_glUniformSpheresOffset + i;
-			m_ComputeShader.SetUniform(uniformIdx, g_Spheres[i].center);
-			uniformIdx = m_glUniformSpheresRadius + i;
-			m_ComputeShader.SetUniform(uniformIdx, g_Spheres[i].radius);
-		}
+		m_ComputeShader.SetUniform3fv(m_glUniformSpheresOffset, g_SpheresCount, (float*)g_Spheres.centers);
+		m_ComputeShader.SetUniform1fv(m_glUniformSpheresRadius, g_SpheresCount, g_Spheres.radii);
 	}
 
 	m_ComputeShader.SetUniform(m_glNumParticles, (int)m_ParticleCount);

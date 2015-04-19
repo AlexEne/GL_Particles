@@ -53,8 +53,8 @@ public:
 Camera		g_Camera;
 
 //Spheres that will be randlomly spawned at random locations in our scene.
-const int		g_SpheresCount = 20;
-Sphere_t		g_Spheres[g_SpheresCount];
+
+Spheres_t		g_Spheres;
 
 
 //Callback used by opengl when an error is encountered
@@ -62,7 +62,9 @@ void APIENTRY openglDebugCallback (GLenum source, GLenum type, GLuint id, GLenum
 {
 	//Just output it to console and stop execution.
 	printf("%s\n", message);
-	__debugbreak();
+
+	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+		__debugbreak();
 }
 
 //Initialize SDL, create the opengl context and then we initialize glew.
@@ -130,10 +132,10 @@ void InitScene()
 
 	for(int i = 0; i < g_SpheresCount; ++i)
 	{
-		g_Spheres[i].radius = 100.0f + fmod((float)rand(), 50.0f);
-		g_Spheres[i].center.x = -700.0f + fmod((float)rand(), 1400.0f);
-		g_Spheres[i].center.y = 0.0f; 
-		g_Spheres[i].center.z = -700.0f + fmod((float)rand(), 1400.0f);
+		g_Spheres.radii[i] = 100.0f + fmod((float)rand(), 50.0f);
+		g_Spheres.centers[i].x = -700.0f + fmod((float)rand(), 1400.0f);
+		g_Spheres.centers[i].y = 0.0f;
+		g_Spheres.centers[i].z = -700.0f + fmod((float)rand(), 1400.0f);
 	}
 }
 

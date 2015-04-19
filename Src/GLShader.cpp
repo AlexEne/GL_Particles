@@ -246,6 +246,26 @@ void GLShaderProgram::SetUniform( int uniform, int val )
 	glUniform1i(uniform, val);
 }
 
+void GLShaderProgram::SetUniform1fv(int uniform, int count, float* values)
+{
+	glUniform1fv(uniform, count, values);
+}
+
+void GLShaderProgram::SetUniform2fv(int uniform, int count, float* values)
+{
+	glUniform2fv(uniform, count, values);
+}
+
+void GLShaderProgram::SetUniform3fv(int uniform, int count, float* values)
+{
+	glUniform3fv(uniform, count, values);
+}
+
+void GLShaderProgram::SetUniform4fv(int uniform, int count, float* values)
+{
+	glUniform4fv(uniform, count, values);
+}
+
 GLShaderProgram::~GLShaderProgram()
 {
 	glDeleteProgram(m_Handle);
