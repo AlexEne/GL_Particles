@@ -40,7 +40,8 @@ private:
 	void				RenderInit(const ParticlePos* particlesPos, const ParticleVelocity* particlesVelocity);
 
 private:
-	unsigned int		m_ParticleCount;    //Number of particles.
+	unsigned int		m_ParticleCount;        //Number of active particles.
+    unsigned int		m_TotalParticleCount;   //Number of all available particles.
 	int					m_csOutputIdx;		//Output index to identify for the buffer that 
 	unsigned int		m_NumWorkGroups[3];
 

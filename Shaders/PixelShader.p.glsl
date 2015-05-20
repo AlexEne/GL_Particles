@@ -1,9 +1,9 @@
 #version 420
 
-in vec4 transformedColor;
+in vec4 vtxColor;
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = transformedColor; 
+	FragColor = vtxColor; 
 }

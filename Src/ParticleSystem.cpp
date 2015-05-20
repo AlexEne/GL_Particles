@@ -11,7 +11,7 @@ m_glUniformSpheresOffset(-1),
 m_glUniformSpheresRadius(-1),
 m_csOutputIdx(1)
 {
-	m_ParticleCount = count;
+	m_ParticleCount = m_TotalParticleCount = count;
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -39,7 +39,7 @@ void ParticleSystem::Init(unsigned int numWorkgroups_x, unsigned int numWorkgrou
 	m_NumWorkGroups[0] = numWorkgroups_x;
 	m_NumWorkGroups[1] = numWorkgroups_y;
 	m_NumWorkGroups[2] = numWorkgroups_z;
-
+    m_ParticleCount = m_TotalParticleCount;
 	ParticlePos* particlesPos = new ParticlePos[m_ParticleCount];
 	ParticleVelocity* particlesVelocity = new ParticleVelocity[m_ParticleCount];
 

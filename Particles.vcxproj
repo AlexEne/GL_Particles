@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\ComputeShader.glsl" />
+    <None Include="Shaders\GeomShader.g.glsl" />
     <None Include="Shaders\PixelShader.p.glsl" />
     <None Include="Shaders\VertexShader.v.glsl" />
   </ItemGroup>

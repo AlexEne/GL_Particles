@@ -89,6 +89,11 @@ bool	GLShaderProgram::CompileShaderFromString(const char* str, ShaderType type)
 			shaderHandle = glCreateShader(GL_COMPUTE_SHADER);
 		}
 		break;
+    case Geometry:
+        {
+            shaderHandle = glCreateShader(GL_GEOMETRY_SHADER);
+        }
+        break;
 	default:
 		printf("GLShaderProgram::CompileShaderFromString Unknown ShadeType %d\n", type);
 	}

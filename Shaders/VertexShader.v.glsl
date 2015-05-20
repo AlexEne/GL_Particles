@@ -7,7 +7,11 @@ in layout (location = 1) vec3 color;
 uniform mat4 ViewMtx;
 uniform mat4 ProjMtx;
 
-out vec4 transformedColor;
+out vData
+{
+    vec4 transformedColor;
+} v_color;
+
 
 void main()
 {
@@ -22,5 +26,5 @@ void main()
 	//Interpolate between the two colors
 	vec3 clr = mix(smallSpeed, largeSpeed, vec3(speed/200.0, speed/200.0, speed/200.0));
 	
-	transformedColor = vec4(clr, (viewPos.z+3000)/3000);
+	v_color.transformedColor = vec4(clr, (viewPos.z+3000)/3000);
 }

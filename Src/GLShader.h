@@ -10,7 +10,8 @@ public:
 	{
 		Vertex,
 		Fragment,
-		Compute
+		Compute,
+        Geometry
 	};
 
 					GLShaderProgram();

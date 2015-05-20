@@ -44,5 +44,8 @@
     <None Include="Shaders\VertexShader.v.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\GeomShader.g.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

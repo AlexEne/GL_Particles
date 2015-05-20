@@ -25,6 +25,7 @@ GLuint			g_ViewUniform = 0;
 GLuint			g_ProjUniform = 0;
 
 ParticleSystem*	g_ParticleSystem = nullptr;
+bool			g_bGamePaused = false;
 
 class Camera
 {
@@ -63,10 +64,8 @@ void APIENTRY openglDebugCallback (GLenum source, GLenum type, GLuint id, GLenum
 	//Just output it to console and stop execution.
 	printf("%s\n", message);
 
-#ifdef _DEBUG
 	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
 		__debugbreak();
-#endif
 }
 
 //Initialize SDL, create the opengl context and then we initialize glew.
@@ -115,6 +114,7 @@ void InitScene()
 	g_ShaderProgram.Init();
 	g_ShaderProgram.CompileShaderFromFile("Shaders\\VertexShader.v.glsl", GLShaderProgram::Vertex);
 	g_ShaderProgram.CompileShaderFromFile("Shaders\\PixelShader.p.glsl", GLShaderProgram::Fragment);
+    g_ShaderProgram.CompileShaderFromFile("Shaders\\GeomShader.g.glsl", GLShaderProgram::Geometry);
 	g_ShaderProgram.Link();
 
 	//Cache
@@ -160,6 +160,9 @@ void Render()
 //dt - in seconds.
 void Update(float dt)
 {
+	if(g_bGamePaused)
+		return;
+
 	g_ParticleSystem->Update(dt);
 }
 
@@ -180,6 +183,10 @@ void HandleKeys(char key, float dx, float dy, float dt)
 	if (key == SDLK_w)
 	{
 		g_Camera.m_Pos.z += dist;
+	}
+	if (key == SDLK_SPACE)
+	{
+		g_bGamePaused = !g_bGamePaused;
 	}
 
 	g_Camera.Update();
