@@ -167,28 +167,37 @@ void Update(float dt)
 }
 
 static float fVelocity = 50.0f;
-void HandleKeys(char key, float dx, float dy, float dt)
+void HandleMovement(const Uint8* state, float dx, float dy, float dt)
 {
-	float accel = 40.0f;
-	fVelocity += accel*dt;
-	float dist = fVelocity*dt;
+	float dist = 0.0f;
+	if (state[SDL_SCANCODE_S] || state[SDL_SCANCODE_W])
+	{
+		const float accel = 40.0f;
+		fVelocity += accel*dt;
+		dist = fVelocity*dt;
+	}
+	else
+	{
+		fVelocity = 0.0f;
+	}
+
+	if (fVelocity >= 200.0f)
+		fVelocity = 200.0f; 
 
 	g_Camera.m_AnglePitch -= dy/25.0f;
 	g_Camera.m_AngleYaw += dx/25.0f;
 
-	if (key == SDLK_s)
+	if (state[SDL_SCANCODE_S])
 	{
 		g_Camera.m_Pos.z -= dist;
 	}
-	if (key == SDLK_w)
+	if (state[SDL_SCANCODE_W])
 	{
 		g_Camera.m_Pos.z += dist;
 	}
-	if (key == SDLK_SPACE)
-	{
-		g_bGamePaused = !g_bGamePaused;
-	}
 
+	
+		
 	g_Camera.Update();
 }
 
@@ -222,31 +231,31 @@ int main(int argc, char *argv[])
 
 		//Handle events
 		SDL_Event e;
+		int dx = 0, dy = 0;
+
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			if( e.type == SDL_QUIT )
 				quit = true;
 
 			//Handle keypress with current mouse position
-			char key = 0;
-			if( e.type == SDL_TEXTINPUT )
-			{
-				if(e.type == SDL_KEYDOWN)
-					fVelocity = 50.0f;
-				 
-				key = e.text.text[0];
-			}
+ 			if( e.type == SDL_TEXTINPUT )
+ 			{
+ 				char key = e.text.text[0];
+				if (key == SDLK_SPACE)
+				{
+					g_bGamePaused = !g_bGamePaused;
+				}
+ 			}
 
-			int dx = 0, dy = 0;
 			if(e.type == SDL_MOUSEMOTION && e.motion.state & SDL_BUTTON_LEFT)
 			{
 				dx = e.motion.xrel;
 				dy = e.motion.yrel;
 			}
+ 		}
 
-			HandleKeys(key,	(float)dx, (float)dy, dt );
-		}
-
+		HandleMovement(SDL_GetKeyboardState(NULL), (float)dx, (float)dy, dt);
 		Update(dt);
 
 		Render();

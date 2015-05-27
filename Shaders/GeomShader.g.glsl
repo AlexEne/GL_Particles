@@ -21,15 +21,15 @@ void main(void)
 		vtxColor = v_color[i].transformedColor;
         EmitVertex();
 
-        gl_Position = gl_in[i].gl_Position + vec4(0.0, 10.0, 0.0, 0.0);
+        gl_Position = gl_in[i].gl_Position + vec4(0.0, 5.0, 0.0, 0.0);
         vtxColor = v_color[i].transformedColor;
         EmitVertex();
 
-        gl_Position = gl_in[i].gl_Position + vec4(10.0, 0.0, 0.0, 0.0);
+        gl_Position = gl_in[i].gl_Position + vec4(5.0, 0.0, 0.0, 0.0);
         vtxColor = v_color[i].transformedColor;
         EmitVertex();
 
-		gl_Position = gl_in[i].gl_Position + vec4(10.0, 10.0, 0.0, 0.0);
+		gl_Position = gl_in[i].gl_Position + vec4(5.0, 5.0, 0.0, 0.0);
         vtxColor = v_color[i].transformedColor;
         EmitVertex();
 
