@@ -171,7 +171,7 @@ void HandleKeys(char key, float dx, float dy, float dt)
 {
 	float accel = 40.0f;
 	fVelocity += accel*dt;
-	float dist = fVelocity*dt + 1/2*accel*dt*dt;
+	float dist = fVelocity*dt;
 
 	g_Camera.m_AnglePitch -= dy/25.0f;
 	g_Camera.m_AngleYaw += dx/25.0f;
