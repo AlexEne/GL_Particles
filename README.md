@@ -10,11 +10,6 @@ This is my first OpenGL work so I wouldn't take it as great learning material.
 
 I might have done some noob-ish mistakes. If I did please tell me and I will correct them.
 
-Right now this causes a crash in atioglxx.dll if you run it on a ATI 6970HD (probably applies to older cards too).
-
-There is a thread open regarding this here:
-http://devgurus.amd.com/thread/168147
-
 Be sure you have the latest drivers.
 
 Movement
