@@ -2,7 +2,7 @@ GL_Particles
 ============
 
 Particles using compute shaders done in OpenGL 4.3
-
+![alt tag](particles.png)
 
 Disclaimer
 ----------
