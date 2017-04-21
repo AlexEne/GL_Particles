@@ -6,40 +6,40 @@
 
 GLuint AllocateBuffer(GLenum bufferType, const void* pData, size_t size)
 {
-	GLuint bufferObject = 0;
-	
-	//Generate a handle
-	glGenBuffers(1, &bufferObject); 
+    GLuint bufferObject = 0;
+    
+    //Generate a handle
+    glGenBuffers(1, &bufferObject); 
 
-	//Bind
-	glBindBuffer(bufferType, bufferObject); 
+    //Bind
+    glBindBuffer(bufferType, bufferObject); 
 
-	//Store data
-	if(pData != nullptr)
-		glBufferData(bufferType, size, pData, GL_STATIC_DRAW); 
+    //Store data
+    if(pData != nullptr)
+        glBufferData(bufferType, size, pData, GL_STATIC_DRAW); 
 
-	//Unbind it
-	glBindBuffer(bufferType, 0);
-	return bufferObject;
+    //Unbind it
+    glBindBuffer(bufferType, 0);
+    return bufferObject;
 }
 
 GLuint AllocateTexture(const void* pData, int width, int height)
 {
-	GLuint textureID = 0;
+    GLuint textureID = 0;
 
-	//Generate a handle
-	glGenTextures(1, &textureID);
-	glActiveTexture(GL_TEXTURE0);
+    //Generate a handle
+    glGenTextures(1, &textureID);
+    glActiveTexture(GL_TEXTURE0);
 
-	//Bind
-	glBindTexture(GL_TEXTURE_2D, textureID);
+    //Bind
+    glBindTexture(GL_TEXTURE_2D, textureID);
 
-	//Init
-	//glTexStorage2D(GL_TEXTURE_2D, 4, GL_RGBA8, width, height);
+    //Init
+    //glTexStorage2D(GL_TEXTURE_2D, 4, GL_RGBA8, width, height);
 
-	//Store data
-	if(pData != nullptr)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_BYTE, pData);
+    //Store data
+    if(pData != nullptr)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_BYTE, pData);
     
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -48,10 +48,10 @@ GLuint AllocateTexture(const void* pData, int width, int height)
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4.0f
 
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	//Unbind it.
-	glBindTexture(GL_TEXTURE_2D, 0);
+    //Unbind it.
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-	return textureID;
+    return textureID;
 }
 
 

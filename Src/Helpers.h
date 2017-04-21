@@ -8,8 +8,8 @@
 const int g_SpheresCount = 20;
 struct Spheres_t
 {
-	glm::vec3		centers[g_SpheresCount];
-	float			radii[g_SpheresCount];
+    glm::vec3		centers[g_SpheresCount];
+    float			radii[g_SpheresCount];
 };
 extern Spheres_t g_Spheres;
 
